@@ -27,7 +27,11 @@ void main(void)
     v_point_col = a_point_col;
 
     /* Compute the vertex from the sprite and point positions */
-    vec3 sprite_pos = u_scale * vec3(2.0 * a_sprite_coord - 1.0, 0.0);
+    float dot_point_col = dot(a_point_col, a_point_col) / 3.0;
+    bool is_zero = dot_point_col < 0.001;
+    bool is_one = abs(dot_point_col - 1.0) < 0.001;
+    float scale = (is_zero || is_one) ? 0.2 * u_scale : 1.0 * u_scale;
+    vec3 sprite_pos = scale * vec3(2.0 * a_sprite_coord - 1.0, 0.0);
     vec4 point_pos = vec4(a_point_pos, 1.0) + inverse(u_view) * vec4(sprite_pos, 1.0);
     gl_Position = u_persp * (u_view * point_pos);
 }

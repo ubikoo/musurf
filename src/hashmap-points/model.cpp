@@ -371,13 +371,12 @@ void Model::execute(void)
         cl_float y = m_probe.pos.s[1];
 
         /* Update probe position and apply periodic boundary conditions. */
-        m_probe.pos.s[0] -= dt * radius * y;
-        m_probe.pos.s[1] += dt * radius * x;
+        m_probe.pos.s[0] -= dt * radius * std::sin(theta);
+        m_probe.pos.s[1] += dt * radius * std::sin(theta);
         m_probe.pos.s[2] += dt * radius * std::cos(theta);
 
         for (size_t i = 0; i < 3; ++i) {
             cl_float len = Params::domain_hi.s[i] - Params::domain_lo.s[i];
-
             if (m_probe.pos.s[i] < Params::domain_lo.s[i]) {
                 m_probe.pos.s[i] += len;
             } else if (m_probe.pos.s[i] > Params::domain_hi.s[i]) {

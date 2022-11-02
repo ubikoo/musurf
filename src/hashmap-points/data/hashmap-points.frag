@@ -28,6 +28,6 @@ void main(void)
     /* Shade the fragment using a simple directional light. */
     const vec3 light_dir = normalize(vec3(0.5, 0.5, 1.5));
     float diffuse = max(0.0, dot(light_dir, N));
-    float alpha = length(v_point_col - kGray) > 0.0 ? 1.0 : 0.5;
+    float alpha = length(v_point_col - kGray) > 0.0 ? 1.0 : 0.1;
     frag_col = vec4(v_point_col*diffuse, alpha);
 }
