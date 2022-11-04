@@ -2,8 +2,11 @@
 #pragma OPENCL EXTENSION cl_khr_fp64 : enable
 #endif
 
-#define kEmpty  0xffffffff
-#define kGray   (float3) (0.5, 0.5, 0.5)
+#define kEmpty          0xffffffff
+#define kGray           (float3) (0.5, 0.5, 0.5)
+#define kWhite          (float3) (1.0, 1.0, 1.0)
+#define kRadiusLarge    1.0
+#define kRadiusSmall    0.1
 
 /** ---------------------------------------------------------------------------
  * Point data type.
@@ -11,6 +14,7 @@
 typedef struct {
     float3 pos;
     float3 col;
+    float radius;
 } Point_t;
 
 /** KeyValue data type. */
@@ -98,7 +102,7 @@ __kernel void hashmap_build(
     }
 }
 
-/** --------------------------------------------------------------------------
+/** ---------------------------------------------------------------------------
  * hashmap_query
  * Query the hashamp for the set points that belong to the same cell as the
  * probe. Color each point accordingly.
@@ -132,13 +136,15 @@ __kernel void hashmap_query(
         /* Color the point by its distance to the probe */
         if (point_key == probe_key) {
             points[id].col = point_upos;
+            points[id].radius = kRadiusLarge;
         } else {
-            points[id].col = kGray;
+            points[id].col = kWhite;
+            points[id].radius = kRadiusSmall;
         }
     }
 }
 
-/** --------------------------------------------------------------------------
+/** ---------------------------------------------------------------------------
  * update_points
  */
 __kernel void update_points(
@@ -152,7 +158,7 @@ __kernel void update_points(
     }
 }
 
-/** --------------------------------------------------------------------------
+/** ---------------------------------------------------------------------------
  * update_vertex
  */
 __kernel void update_vertex(
@@ -162,11 +168,12 @@ __kernel void update_vertex(
 {
     const uint id = get_global_id(0);
     if (id < n_points) {
-        vertex[6*id + 0] = points[id].pos.x;
-        vertex[6*id + 1] = points[id].pos.y;
-        vertex[6*id + 2] = points[id].pos.z;
-        vertex[6*id + 3] = points[id].col.x;
-        vertex[6*id + 4] = points[id].col.y;
-        vertex[6*id + 5] = points[id].col.z;
+        vertex[7*id + 0] = points[id].pos.x;
+        vertex[7*id + 1] = points[id].pos.y;
+        vertex[7*id + 2] = points[id].pos.z;
+        vertex[7*id + 3] = points[id].col.x;
+        vertex[7*id + 4] = points[id].col.y;
+        vertex[7*id + 5] = points[id].col.z;
+        vertex[7*id + 6] = points[id].radius;
     }
 }

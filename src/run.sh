@@ -52,3 +52,5 @@ execute() {
     popd
 }
 
+execute hashmap-points
+

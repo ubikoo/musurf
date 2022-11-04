@@ -36,7 +36,9 @@ Model::Model()
                 /* point color */
                 0.0f,
                 0.0f,
-                0.0f});
+                0.0f,
+                /* point radius*/
+                1.0f});
         }
 
         /* Initialize prope */
@@ -55,11 +57,11 @@ Model::Model()
 
         /*
          * Create buffer storage for vertex data with layout:
-         * {(xyzrgb)_1, (xyzrgb)_2, ...}
+         * {(xyz,rgb,scale)_1, (xyz,rgb,scale)_2, ...}
          */
         m_gl.point_vbo = gl::create_buffer(
             GL_ARRAY_BUFFER,
-            6 * Params::n_points * sizeof(GLfloat),
+            7 * Params::n_points * sizeof(GLfloat),
             GL_STREAM_DRAW);
 
         /*
@@ -134,7 +136,7 @@ Model::Model()
             m_gl.program,
             "a_point_pos",
             GL_FLOAT_VEC3,
-            6*sizeof(GLfloat),  /* byte offset between consecutive attributes */
+            7*sizeof(GLfloat),  /* byte offset between consecutive attributes */
             0,                  /* byte offset of first element in the buffer */
             false);             /* normalized flag */
         gl::attribute_divisor(m_gl.program, "a_point_pos", 1);
@@ -144,10 +146,20 @@ Model::Model()
             m_gl.program,
             "a_point_col",
             GL_FLOAT_VEC3,
-            6*sizeof(GLfloat),  /* byte offset between consecutive attributes */
+            7*sizeof(GLfloat),  /* byte offset between consecutive attributes */
             3*sizeof(GLfloat),  /* byte offset of first element in the buffer */
             false);             /* normalized flag */
         gl::attribute_divisor(m_gl.program, "a_point_col", 1);
+
+        gl::enable_attribute(m_gl.program, "a_point_radius");
+        gl::attribute_pointer(
+            m_gl.program,
+            "a_point_radius",
+            GL_FLOAT,
+            7*sizeof(GLfloat),  /* byte offset between consecutive attributes */
+            6*sizeof(GLfloat),  /* byte offset of first element in the buffer */
+            false);             /* normalized flag */
+        gl::attribute_divisor(m_gl.program, "a_point_radius", 1);
 
         /* Unbind vertex array object. */
         glBindVertexArray(0);

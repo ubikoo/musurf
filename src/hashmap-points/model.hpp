@@ -21,6 +21,7 @@ struct Model : atto::gl::Drawable {
     struct Point {
         cl_float3 pos;
         cl_float3 col;
+        cl_float radius;
     };
 
     struct KeyValue {
